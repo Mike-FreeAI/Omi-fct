@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
   }
 
   _tabChange(int index) {
-    MixpanelManager().bottomNavigationTabClicked(['Memories', 'Device', 'Chat'][index]);
+    MixpanelManager().bottomNavigationTabClicked(['Memories', 'Chat'][index]);
     FocusScope.of(context).unfocus();
     context.read<HomeProvider>().setIndex(index);
     _controller!.animateTo(index);
@@ -307,7 +307,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
                                 ),
                                 Expanded(
                                   child: MaterialButton(
-                                    onPressed: () => _tabChange(2),
+                                    onPressed: () => _tabChange(1),
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 20, bottom: 20),
                                       child: Text(
