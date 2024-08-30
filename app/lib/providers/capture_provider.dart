@@ -14,6 +14,7 @@ import 'package:friend_private/backend/preferences.dart';
 import 'package:friend_private/backend/schema/bt_device.dart';
 import 'package:friend_private/backend/schema/geolocation.dart';
 import 'package:friend_private/backend/schema/memory.dart';
+import 'package:friend_private/backend/schema/message.dart';
 import 'package:friend_private/backend/schema/message_event.dart';
 import 'package:friend_private/backend/schema/structured.dart';
 import 'package:friend_private/backend/schema/transcript_segment.dart';
@@ -110,13 +111,21 @@ class CaptureProvider extends ChangeNotifier with WebSocketMixin, OpenGlassMixin
     setMemoryCreating(true);
   }
 
-  Future<void> _onMemoryCreated(String memoryId) async {
-    var memory = await getMemoryById(memoryId);
-    _proessOnMemoryCreate(memory);
+  Future<void> _onProcessingMemoryCreated(String processingMemoryId) async {
+    // TODO: thinh, update info to /processing-memories/:id
+  }
+
+  Future<void> _onMemoryCreated(String processingMemoryId) async {
+    var processingMemory = await getProcessingMemoryById(processingMemoryId);
+    if (processingMemory == null) {
+      print("Processing Memory is not found $processingMemoryId");
+      return;
+    }
+    _proessOnMemoryCreate(processingMemory.memory, processingMemory.messages);
   }
 
   void _onMemoryCreateFailed() {
-    _proessOnMemoryCreate(null); // force failed
+    _proessOnMemoryCreate(null, []); // force failed
   }
 
   Future<void> _onMemoryPostProcessSuccess(String memoryId) async {
@@ -139,7 +148,17 @@ class CaptureProvider extends ChangeNotifier with WebSocketMixin, OpenGlassMixin
     memoryProvider?.updateMemory(memory);
   }
 
-  Future<bool?> _proessOnMemoryCreate(ServerMemory? memory) async {
+  Future<bool?> _proessOnMemoryCreate(ServerMemory? memory, List<ServerMessage> messages) async {
+    if (memory != null) {
+      await processMemoryContent(
+        memory: memory,
+        messages: messages,
+        sendMessageToChat: (v) {
+          // use message provider to send message to chat
+          messageProvider?.addMessage(v);
+        },
+      );
+    }
     if (memory == null && (segments.isNotEmpty || photos.isNotEmpty)) {
       memory = ServerMemory(
         id: const Uuid().v4(),
@@ -337,16 +356,25 @@ class CaptureProvider extends ChangeNotifier with WebSocketMixin, OpenGlassMixin
         }
 
         if (event.type == MessageEventType.newMemoryCreated) {
-          if (event.memoryId == null) {
+          if (event.processingMemoryId == null) {
             print("New memory created message event is invalid");
             return;
           }
-          _onMemoryCreated(event.memoryId!);
+          _onMemoryCreated(event.processingMemoryId!);
           return;
         }
 
         if (event.type == MessageEventType.newMemoryCreateFailed) {
           _onMemoryCreateFailed();
+          return;
+        }
+
+        if (event.type == MessageEventType.newProcessingMemoryCreated) {
+          if (event.processingMemoryId == null) {
+            print("New processing memory created message event is invalid");
+            return;
+          }
+          _onProcessingMemoryCreated(event.processingMemoryId!);
           return;
         }
 
