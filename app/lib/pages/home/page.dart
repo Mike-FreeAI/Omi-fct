@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
   FocusNode memoriesTextFieldFocusNode = FocusNode(canRequestFocus: true);
 
   GlobalKey<ChatPageState> chatPageKey = GlobalKey();
-  
+
   final _upgrader = MyUpgrader(debugLogging: false, debugDisplayOnce: false);
   bool scriptsInProgress = false;
 
@@ -119,11 +119,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
     // TODO: Being triggered multiple times during navigation. It ideally shouldn't
     connectivityController.init();
     _controller = TabController(
-      length: 3,
+      length: 2,
       vsync: this,
       initialIndex: SharedPreferencesUtil().pageToShowFromNotification,
     );
-    SharedPreferencesUtil().pageToShowFromNotification = 1;
+    SharedPreferencesUtil().pageToShowFromNotification = 0; // TODO: whatisit
     SharedPreferencesUtil().onboardingCompleted = true;
 
     WidgetsBinding.instance.addObserver(this);
@@ -218,7 +218,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
                         ScaffoldMessenger.of(ctx).hideCurrentMaterialBanner();
                       }),
                     ),
-
                   );
 
                   WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -288,6 +287,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 10,
+                                  ),
+                                ),
                                 Expanded(
                                   child: MaterialButton(
                                     onPressed: () => _tabChange(0),
@@ -445,7 +449,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
                         );
                       }
                     }),
-                    _controller!.index == 2
+                    _controller!.index == 1
                         ? Consumer<PluginProvider>(builder: (context, provider, child) {
                             return Padding(
                               padding: const EdgeInsets.only(left: 0),
@@ -488,7 +492,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
                     IconButton(
                       icon: const Icon(Icons.settings, color: Colors.white, size: 30),
                       onPressed: () async {
-
                         MixpanelManager().settingsOpened();
                         String language = SharedPreferencesUtil().recordingsLanguage;
                         bool hasSpeech = SharedPreferencesUtil().hasSpeakerProfile;

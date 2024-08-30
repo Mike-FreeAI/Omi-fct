@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:friend_private/backend/schema/message_event.dart';
 import 'package:friend_private/backend/schema/transcript_segment.dart';
 import 'package:friend_private/backend/schema/bt_device.dart';
 import 'package:friend_private/services/notification_service.dart';
@@ -32,6 +33,7 @@ mixin WebSocketMixin {
     required Function(int?, String?) onConnectionClosed,
     required Function(dynamic) onConnectionError,
     required Function(List<TranscriptSegment>) onMessageReceived,
+    Function(ServerMessageEvent)? onMessageEventReceived,
     required BleAudioCodec codec,
     required int sampleRate,
     required bool includeSpeechProfile,
@@ -47,6 +49,7 @@ mixin WebSocketMixin {
         onConnectionClosed: onConnectionClosed,
         onConnectionError: onConnectionError,
         onMessageReceived: onMessageReceived,
+        onMessageEventReceived: onMessageEventReceived,
         codec: codec,
         sampleRate: sampleRate,
         includeSpeechProfile: includeSpeechProfile,
@@ -83,6 +86,7 @@ mixin WebSocketMixin {
             onConnectionClosed: onConnectionClosed,
             onConnectionError: onConnectionError,
             onMessageReceived: onMessageReceived,
+            onMessageEventReceived: onMessageEventReceived,
             codec: codec,
             sampleRate: sampleRate,
             includeSpeechProfile: includeSpeechProfile,
@@ -100,6 +104,7 @@ mixin WebSocketMixin {
               onConnectionClosed: onConnectionClosed,
               onConnectionError: onConnectionError,
               onMessageReceived: onMessageReceived,
+              onMessageEventReceived: onMessageEventReceived,
               codec: codec,
               sampleRate: sampleRate,
               includeSpeechProfile: includeSpeechProfile,
@@ -118,16 +123,17 @@ mixin WebSocketMixin {
             onConnectionClosed: onConnectionClosed,
             onConnectionError: onConnectionError,
             onMessageReceived: onMessageReceived,
+            onMessageEventReceived: onMessageEventReceived,
             codec: codec,
             sampleRate: sampleRate,
             includeSpeechProfile: includeSpeechProfile,
           );
         },
         onMessageReceived: onMessageReceived,
+        onMessageEventReceived: onMessageEventReceived,
         codec: codec,
         sampleRate: sampleRate,
         includeSpeechProfile: includeSpeechProfile,
-
       );
     } catch (e) {
       debugPrint('Error in initWebSocket: $e');
@@ -142,6 +148,7 @@ mixin WebSocketMixin {
     required Function(int?, String?) onConnectionClosed,
     required Function(dynamic) onConnectionError,
     required Function(List<TranscriptSegment>) onMessageReceived,
+    Function(ServerMessageEvent)? onMessageEventReceived,
     required BleAudioCodec codec,
     required int sampleRate,
     required bool includeSpeechProfile,
@@ -162,6 +169,7 @@ mixin WebSocketMixin {
               onConnectionClosed: onConnectionClosed,
               onConnectionError: onConnectionError,
               onMessageReceived: onMessageReceived,
+              onMessageEventReceived: onMessageEventReceived,
               codec: codec,
               sampleRate: sampleRate,
               includeSpeechProfile: includeSpeechProfile,
@@ -187,6 +195,7 @@ mixin WebSocketMixin {
     required Function(int?, String?) onConnectionClosed,
     required Function(dynamic) onConnectionError,
     required Function(List<TranscriptSegment>) onMessageReceived,
+    Function(ServerMessageEvent)? onMessageEventReceived,
     required BleAudioCodec codec,
     required int sampleRate,
     required bool includeSpeechProfile,
@@ -215,6 +224,7 @@ mixin WebSocketMixin {
         onConnectionClosed: onConnectionClosed,
         onConnectionError: onConnectionError,
         onMessageReceived: onMessageReceived,
+        onMessageEventReceived: onMessageEventReceived,
         codec: codec,
         sampleRate: sampleRate,
         includeSpeechProfile: includeSpeechProfile,
@@ -237,6 +247,7 @@ mixin WebSocketMixin {
     required Function(int?, String?) onConnectionClosed,
     required Function(dynamic) onConnectionError,
     required Function(List<TranscriptSegment>) onMessageReceived,
+    Function(ServerMessageEvent)? onMessageEventReceived,
     required BleAudioCodec codec,
     required int sampleRate,
     required bool includeSpeechProfile,
@@ -254,6 +265,7 @@ mixin WebSocketMixin {
       onConnectionClosed: onConnectionClosed,
       onConnectionError: onConnectionError,
       onMessageReceived: onMessageReceived,
+      onMessageEventReceived: onMessageEventReceived,
       codec: codec,
       sampleRate: sampleRate,
       includeSpeechProfile: includeSpeechProfile,
