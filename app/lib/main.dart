@@ -48,8 +48,10 @@ Future<bool> _init() async {
 
   listenAuthTokenChanges();
   bool isAuth = false;
+  bool isNonWearable = false; // New variable to check if the device is non-wearable
   try {
     isAuth = (await getIdToken()) != null;
+    isNonWearable = await checkIfNonWearableDevice(); // Modify the _init function to set isNonWearable based on the device type
   } catch (e) {} // if no connect this will fail
 
   if (isAuth) MixpanelManager().identify();
@@ -72,6 +74,7 @@ void main() async {
   // _setupAudioSession();
 
   bool isAuth = await _init();
+  bool isNonWearable = await checkIfNonWearableDevice(); // Update the main function to pass isNonWearable to MyApp
   if (Env.instabugApiKey != null) {
     Instabug.setWelcomeMessageMode(WelcomeMessageMode.disabled);
     runZonedGuarded(
@@ -91,19 +94,20 @@ void main() async {
           Zone.current.handleUncaughtError(details.exception, details.stack ?? StackTrace.empty);
         };
         Instabug.setColorTheme(ColorTheme.dark);
-        runApp(MyApp(isAuth: isAuth));
+        runApp(MyApp(isAuth: isAuth, isNonWearable: isNonWearable)); // Pass isNonWearable to MyApp
       },
       CrashReporting.reportCrash,
     );
   } else {
-    runApp(MyApp(isAuth: isAuth));
+    runApp(MyApp(isAuth: isAuth, isNonWearable: isNonWearable)); // Pass isNonWearable to MyApp
   }
 }
 
 class MyApp extends StatefulWidget {
   final bool isAuth;
+  final bool isNonWearable; // Accept isNonWearable as a parameter
 
-  const MyApp({super.key, required this.isAuth});
+  const MyApp({super.key, required this.isAuth, required this.isNonWearable});
 
   @override
   State<MyApp> createState() => _MyAppState();

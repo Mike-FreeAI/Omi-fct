@@ -24,8 +24,11 @@ import 'package:provider/provider.dart';
 import 'logic/websocket_mixin.dart';
 
 class CapturePage extends StatefulWidget {
+  final bool isNonWearable;
+
   const CapturePage({
     super.key,
+    required this.isNonWearable,
   });
 
   @override
